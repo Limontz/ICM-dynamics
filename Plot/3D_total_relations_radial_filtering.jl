@@ -1,0 +1,244 @@
+using DelimitedFiles
+using PyCall
+using PyPlot
+using Statistics
+using DataFrames
+using LsqFit
+using HypothesisTests
+@pyimport mpl_toolkits.axes_grid1 as axgrid
+
+
+
+main = "/home/marco/Scrivania/Ettori_project/"
+
+file1=string(main,"IT90_0/01_radial_filtering/new_IT90_0_3D_radial_filtering_fluctuations_radial_trend.txt")
+file2=string(main,"IT90_1/01_radial_filtering/new_IT90_1_3D_radial_filtering_fluctuations_radial_trend.txt")
+file3=string(main,"IT90_2/01_radial_filtering/new_IT90_2_3D_radial_filtering_fluctuations_radial_trend.txt")
+file4=string(main,"IT90_3/01_radial_filtering/new_IT90_3_3D_radial_filtering_fluctuations_radial_trend.txt")
+file5=string(main,"IT90_4/01_radial_filtering/new_IT90_4_3D_radial_filtering_fluctuations_radial_trend.txt")
+file6=string(main,"IT92_0/01_radial_filtering/new_IT92_0_3D_radial_filtering_fluctuations_radial_trend.txt")
+file7=string(main,"IT92_1/01_radial_filtering/new_IT92_1_3D_radial_filtering_fluctuations_radial_trend.txt")
+file8=string(main,"IT92_2/01_radial_filtering/new_IT92_2_3D_radial_filtering_fluctuations_radial_trend.txt")
+
+data1=readdlm(file1,comments=true)
+data2=readdlm(file2,comments=true)
+data3=readdlm(file3,comments=true)
+data4=readdlm(file4,comments=true)
+data5=readdlm(file5,comments=true)
+data6=readdlm(file6,comments=true)
+data7=readdlm(file7,comments=true)
+data8=readdlm(file8,comments=true)
+
+
+density = cat(data8[:,2],cat(data7[:,2],cat(data6[:,2],cat(data5[:,2],cat(data4[:,2],cat(data3[:,2],cat(data2[:,2],data1[:,2],dims=(1,1)),dims=(1,1)),dims=(1,1)),
+          dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+temperature = cat(data8[:,3],cat(data7[:,3],cat(data6[:,3],cat(data5[:,3],cat(data4[:,3],cat(data3[:,3],cat(data2[:,3],data1[:,3],dims=(1,1)),dims=(1,1)),
+              dims=(1,1)),dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+velocity = cat(data8[:,4],cat(data7[:,4],cat(data6[:,4],cat(data5[:,4],cat(data4[:,4],cat(data3[:,4],cat(data2[:,4],data1[:,4],dims=(1,1)),dims=(1,1)),
+           dims=(1,1)),dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+
+velocity = cat(data8[:,4],cat(data7[:,4],cat(data6[:,4],cat(data5[:,4],cat(data4[:,4],cat(data3[:,4],cat(data2[:,4],data1[:,4],dims=(1,1)),dims=(1,1)),
+                      dims=(1,1)),dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+
+velocity2 = cat(data8[:,5],cat(data7[:,5],cat(data6[:,5],cat(data5[:,5],cat(data4[:,5],cat(data3[:,5],cat(data2[:,5],data1[:,5],dims=(1,1)),dims=(1,1)),
+                  dims=(1,1)),dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+
+radius_x = cat(data8[:,1],cat(data7[:,1],cat(data6[:,1],cat(data5[:,1],cat(data4[:,1],cat(data3[:,1],cat(data2[:,1],data1[:,1],dims=(1,1)),dims=(1,1)),
+               dims=(1,1)),dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+
+density_perturbed = cat(data8[:,2],cat(data7[:,2],cat(data5[:,2],cat(data4[:,2],data1[:,2],dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+temperature_perturbed = cat(data8[:,3],cat(data7[:,3],cat(data5[:,3],cat(data4[:,3],data1[:,3],dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+velocity_perturbed = cat(data8[:,4],cat(data7[:,4],cat(data5[:,4],cat(data4[:,4],data1[:,4],dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+velocity_perturbed2 = cat(data8[:,5],cat(data7[:,5],cat(data5[:,5],cat(data4[:,5],data1[:,5],dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+radius_perturbed = cat(data8[:,1],cat(data7[:,1],cat(data5[:,1],cat(data4[:,1],data1[:,1],dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1))
+
+density_relaxed = cat(data6[:,2],cat(data3[:,2],data2[:,2],dims=(1,1)),dims=(1,1))
+temperature_relaxed = cat(data6[:,3],cat(data3[:,3],data2[:,3],dims=(1,1)),dims=(1,1))
+velocity_relaxed = cat(data6[:,4],cat(data3[:,4],data2[:,4],dims=(1,1)),dims=(1,1))
+velocity_relaxed2 = cat(data6[:,5],cat(data3[:,5],data2[:,5],dims=(1,1)),dims=(1,1))
+radius_relaxed = cat(data6[:,1],cat(data3[:,1],data2[:,1],dims=(1,1)),dims=(1,1))
+
+w = [8.44, 6.62, 6.63, 12.2, 12.7, 3.84, 11.3, 6.67]
+w = cat( fill(6.67,10), cat(fill(11.3,10),cat(fill(3.84,10),cat(fill(12.7,10), cat(fill(12.2,10),cat(fill(6.63,10),cat(fill(6.62,10),fill(8.44,10),
+         dims=(1,1)),dims=(1,1)),dims=(1,1)), dims=(1,1)),dims=(1,1)), dims=(1,1)), dims=(1,1) )
+
+m(x, p) =  p[1] .* x
+p0=[1.]
+fit = curve_fit(m, density_perturbed, temperature_perturbed, p0)
+param = fit.param[1]
+#param = mean(temperature./density2)
+sigma_par= stderror(fit)[1]
+if sigma_par < 0.01
+   sigma_par = 0.01
+end
+#res= fit.resid
+
+R = Statistics.cor(density, temperature)
+p_value=pvalue(CorrelationTest(density,temperature))
+println("R= ", R)
+println("p-value =", p_value)
+
+
+println("----------- 2D FLUCTUATIONS: temperature-density -------------")
+println("m = ", param, " +- ", sigma_par)
+
+x = collect(minimum((density)):0.01:maximum((density)))
+y = zeros(length(x))
+
+for i in 1:length(x)
+    y[i] = param[1]*((x[i]))
+end
+
+y2 = zeros(length(x))
+
+for i in 1:length(x)
+    y2[i] = 0.19*((x[i]))
+end
+
+
+fig, ax1 = subplots(figsize=(6,7))
+#fig, ax1 = subplots(figsize=(6,6))
+fig.subplots_adjust(top=0.99,bottom=0.125,left=0.165, right=0.99)
+#plot(density, temperature, linestyle="", marker=".", markersize="10.0",color="black")
+scatter(density, temperature, s=150, marker=".", c=w, cmap="cividis")
+#scatter(density_perturbed, temperature_perturbed, s=150, marker=".", facecolors="blue", edgecolors="black", label="Disturbed")
+#scatter(density_relaxed, temperature_relaxed, s=150, marker=".", facecolors="orange", edgecolors="black", label="Relaxed")
+ax=gca()
+divider = axgrid.make_axes_locatable(ax)
+
+plot(x,y,marker="", color="red")
+ylabel(L"(\sigma_{T}/T(r))_{3D}", fontsize=20)
+xlabel(L"(\sigma_{\rho}/\rho(r))_{3D}", fontsize=20)
+text(0.2, 0.46, string("m= ", round(param, digits=2), L"\pm", round(sigma_par, digits=2)), fontsize= 18)
+xticks(fontsize=18)
+yticks(fontsize=18)
+cax = divider[:append_axes]("top", size="5%", pad =0.05)
+cbar=colorbar(orientation="horizontal", cax=cax)
+cbar.ax.tick_params(labelsize=13)
+cbar.ax.xaxis.set_ticks_position("top")
+cbar.ax.xaxis.set_label_position("top")
+##cbar.ax.yaxis.get_offset_text().set(size=20)
+##cbar[:set_yticklabel](labelsize="large")
+cbar[:set_label](L"w [10^{-3}]",fontsize= 15)
+##ylim(0,3)
+#legend(fontsize=12)
+
+
+show()
+readline()
+clf()
+
+m(x, p) =  p[1] .* x
+p0=[1.]
+fit = curve_fit(m, density_perturbed, velocity_perturbed, p0)
+param = fit.param[1]
+#param = mean(temperature./density2)
+sigma_par= stderror(fit)[1]
+if sigma_par < 0.01
+   sigma_par = 0.01
+end
+#res= fit.resid
+
+#println("----------- 2D FLUCTUATIONS: temperature-density -------------")
+println("m = ", param, " +- ", sigma_par)
+
+x = collect(minimum((density)):0.01:maximum((density)))
+y = zeros(length(x))
+
+for i in 1:length(x)
+    y[i] = param[1]*((x[i]))
+end
+
+R = Statistics.cor(density, velocity)
+p_value=pvalue(CorrelationTest(density,velocity))
+println("R= ", R)
+println("p-value =", p_value)
+
+
+fig, ax1 = subplots(figsize=(6,7))
+#fig, ax1 = subplots(figsize=(6,6))
+fig.subplots_adjust(top=0.99,bottom=0.125,left=0.165, right=0.99)
+#plot(density, velocity, linestyle="", marker=".", markersize="10.0",color="black")
+scatter(density, velocity, s=30, marker="s", c=w, cmap="cividis")
+#scatter(density_perturbed, velocity_perturbed, s=30, marker="s", facecolors="blue", edgecolors="black", label="Disturbed")
+#scatter(density_relaxed, velocity_relaxed, s=30, marker="s", facecolors="orange", edgecolors="black", label="Relaxed")
+
+plot(x,y,marker="", color="red")
+ylabel(L"(\sigma_{v}/c_s(r))_{3D}", fontsize=20)
+xlabel(L"(\sigma_{\rho}/\rho(r))_{3D}", fontsize=20)
+text(0.2, 0.55, string("m= ", round(param, digits=2), L"\pm", round(sigma_par, digits=2)), fontsize= 18)
+ax=gca()
+divider = axgrid.make_axes_locatable(ax)
+##ylim(0,3)
+xticks(fontsize=18)
+yticks(fontsize=18)
+
+cax = divider[:append_axes]("top", size="5%", pad =0.05)
+cbar=colorbar(orientation="horizontal", cax=cax)
+cbar.ax.tick_params(labelsize=13)
+cbar.ax.xaxis.set_ticks_position("top")
+cbar.ax.xaxis.set_label_position("top")
+##cbar.ax.yaxis.get_offset_text().set(size=20)
+##cbar[:set_yticklabel](labelsize="large")
+cbar[:set_label](L"w [10^{-3}]",fontsize= 15)
+
+show()
+readline()
+clf()
+
+m(x, p) =  p[1] .* x
+p0=[1.]
+fit = curve_fit(m, temperature_perturbed, velocity_perturbed, p0)
+param = fit.param[1]
+#param = mean(temperature./density2)
+sigma_par= stderror(fit)[1]
+if sigma_par < 0.01
+   sigma_par = 0.01
+end
+#res= fit.resid
+
+println("----------- 2D FLUCTUATIONS: temperature-density -------------")
+println("m = ", param[1], " +- ", sigma_par[1])
+
+x = collect(minimum((temperature)):0.01:maximum((temperature)))
+y = zeros(length(x))
+
+for i in 1:length(x)
+    y[i] = param[1]*((x[i]))
+end
+
+
+R = Statistics.cor(temperature, velocity)
+p_value=pvalue(CorrelationTest(temperature, velocity))
+println("R= ", R)
+println("p-value =", p_value)
+
+
+fig, ax1 = subplots(figsize=(6,7))
+#fig, ax1 = subplots(figsize=(6,6))
+fig.subplots_adjust(top=0.99,bottom=0.125,left=0.165, right=0.99)
+#plot(temperature, velocity.^2, linestyle="", marker=".", markersize="10.0",color="black")
+scatter(temperature, velocity, s=30, marker="D", c=w, cmap="cividis")
+#scatter(temperature_perturbed, velocity_perturbed2, s=30, marker="D", facecolors="blue", edgecolors="black", label="Disturbed")
+#scatter(temperature_relaxed, velocity_relaxed2, s=30, marker="D", facecolors="orange", edgecolors="black", label="Relaxed")
+
+plot(x,y,marker="", color="red")
+ylabel(L"(\sigma_{v}/c_s(r)))_{3D}", fontsize=20)
+xlabel(L"(\sigma_{T}/T(r))_{3D}", fontsize=20)
+text(0.10, 0.50, string("m= ", round(param, digits=2), L"\pm", round(sigma_par, digits=2)), fontsize= 18)
+
+#ylim(0,3)
+xticks(fontsize=18)
+yticks(fontsize=18)
+ax=gca()
+divider = axgrid.make_axes_locatable(ax)
+cax = divider[:append_axes]("top", size="5%", pad =0.05)
+cbar=colorbar(orientation="horizontal", cax=cax)
+cbar.ax.tick_params(labelsize=13)
+cbar.ax.xaxis.set_ticks_position("top")
+cbar.ax.xaxis.set_label_position("top")
+##cbar.ax.yaxis.get_offset_text().set(size=20)
+##cbar[:set_yticklabel](labelsize="large")
+cbar[:set_label](L"w [10^{-3}]",fontsize= 15)
+
+show()
