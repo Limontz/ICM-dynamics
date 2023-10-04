@@ -143,9 +143,12 @@ zc = index[3]
 rmax=r500
 radial_bin = Int(floor(10*rmax/r500))
 
-include(string(main, "3D_average_radial_perturbation.jl"))
-dens_shell_mean, temp_shell_mean, v_shell_mean, slope_dt, slope_dv, slope_tv, slope_tv2=average_radial_perturb(deltad, deltaT,deltav, radial_bin, xc, yc ,zc, r500)
+#include(string(main, "3D_average_radial_perturbation.jl"))
+#dens_shell_mean, temp_shell_mean, v_shell_mean, slope_dt, slope_dv, slope_tv, slope_tv2=average_radial_perturb(deltad, deltaT,deltav, radial_bin, xc, yc ,zc, r500)
 
+thickness = 0.1
+include(string(main, "3D_slope_radial_profile.jl"))
+slope_dt, slope_dv, slope_tv, slope_tv2=slope_radial_profile(deltad,deltaT,deltav, radial_bin, xc, yc ,zc, r500, thickness)
 
 bin=[1,2,3,4,5,6,7,8,9,10]
 #output1=string("/home/marco/Scrivania/Ettori_project/IT92_2/300_kpc_filtering/IT92_2_3D_box_filtering_fluctuations_radial_trend.txt")

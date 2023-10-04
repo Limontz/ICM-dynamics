@@ -94,7 +94,7 @@ d_2D, spec_T_2D, vx_2D, vy_2D, vz_2D = projection(d, temp, vx, vy, vz, Npoint)
 #********************* Let's consider only ************************
 #********************* the cells inside R500 **********************
 Ncell = floor(Int32, (r500/(20*kpc)))
-Ncell_box= 5
+Ncell_box= 15
 Nhalf_box=floor(Int32,Ncell_box/2)
 
 
@@ -140,7 +140,7 @@ yc = floor(Int32, length(d_2D[1,:])/2 +1)
 #****************** FILTERING *********************************
 
 
-deltad_2D, deltaT_2D, deltav_2D = filtering2D(d_2D, temp_2D, vx_2D, vy_2D, vz_2D, Ncell+Nhalf_box, Nhalf_box)
+deltad_2D, deltaT_2D, deltav_2D = box_filtering2D(d_2D, temp_2D, vx_2D, vy_2D, vz_2D, Ncell+Nhalf_box, Nhalf_box)
 println("2D filtering done")
 
 deltad_2D = deltad_2D[xc-Ncell:xc+Ncell,
@@ -251,7 +251,7 @@ p_value=pvalue(CorrelationTest(deltad_2D,deltaT_2D))
 #end
 #close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/100_kpc_2D_box_filtering/z_2D_100_kpc_box_filtering_density_temperature_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_2D_box_filtering/z_2D_300_kpc_box_filtering_density_temperature_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -301,7 +301,7 @@ p_value=pvalue(CorrelationTest(abs.(deltad_2D),abs.(deltav_2D)))
 #end
 #close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/100_kpc_2D_box_filtering/z_2D_100_kpc_box_filtering_density_velocity_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_2D_box_filtering/z_2D_300_kpc_box_filtering_density_velocity_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -351,7 +351,7 @@ p_value=pvalue(CorrelationTest(abs.(deltaT_2D), abs.(deltav_2D)))
 #end
 #close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/100_kpc_2D_box_filtering/z_2D_100_kpc_box_filtering_temperature_velocity_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_2D_box_filtering/z_2D_300_kpc_box_filtering_temperature_velocity_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -396,7 +396,7 @@ p_value=pvalue(CorrelationTest(abs.(deltaT_2D),deltav_2D.^2))
 #end
 #close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/100_kpc_2D_box_filtering/z_2D_100_kpc_box_filtering_temperature_velocity2_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_2D_box_filtering/z_2D_300_kpc_box_filtering_temperature_velocity2_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end

@@ -1,84 +1,149 @@
-using HDF5
-using DelimitedFiles
+using CSV
+using DataFrames
+using Statistics
 using PyCall
 using PyPlot
-using Statistics
-using LsqFit
 
-d_t_slope_2d_box = [0.03, 0.09, -0.07, -0.07, 0.02, 0.08, -0.25, -0.02]
-d_v_slope_2d_box = [0.67, 0.68, 0.78, 0.56, 0.60, 0.56, 0.71, 0.55]
-t_v_slope_2d_box = [0.07, 0.08, 0.10, 0.12, 0.06, 0.02, 0.08, 0.05]
+main = "/home/marco/Scrivania/Ettori_project/"
 
-d_t_slope_2d_box_error = [0.01, 0.01, 0.01, 0.01, 0.02, 0.01, 0.01, 0.01]
-d_v_slope_2d_box_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-t_v_slope_2d_box_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+# Specifica il percorso della tua cartella
+folder_path_box_3D = string(main,"100_kpc_3D_box_filtering/")
+folder_path_box_2D = string(main,"100_kpc_2D_box_filtering/")
+folder_path_radial_3D = string(main,"01_3D_radial_filtering/")
+folder_path_radial_2D = string(main,"01_2D_radial_filtering/")
 
-d_t_slope_3d_box = [-0.34, -0.15, -0.35, -0.33, -0.24, -0.42, -0.37, -0.23]
-d_v_slope_3d_box = [1.07, 1.25, 1.16, 1.15, 1.14, 1.18, 1.12, 1.09]
-t_v_slope_3d_box = [0.45, 0.47, 0.39, 0.46, 0.40, 0.29, 0.35, 0.35]
+# Crea un DataFrame vuoto
+df3d_box = DataFrame()
 
-d_t_slope_3d_box_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-d_v_slope_3d_box_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-t_v_slope_3d_box_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+# 100 kpc 3D box filtering reading
+for file in readdir(folder_path_box_3D)
+    if endswith(file, ".txt")
+        df = CSV.File(joinpath(folder_path_box_3D, file), delim=',', header=true) |> DataFrame
+        for col_name in names(df)[1:2]
+            df3d_box[!, col_name] = df[!, col_name]
+        end
+    end
+end
+
+# 100 kpc 2D box filtering reading
+df2d_box = DataFrame()
+
+# Itera sui file e leggi i dati
+for file in readdir(folder_path_box_2D)
+    if endswith(file, ".txt")
+        df = CSV.File(joinpath(folder_path_box_2D, file), delim=',', header=true) |> DataFrame
+        for col_name in names(df)[1:2]
+            new_col_name = Symbol(col_name * "_" * file[1])  # Aggiungi il nome del file per rendere il nome univoco
+            df2d_box[!, new_col_name] = df[!, col_name]
+        end
+    end
+end
+
+# 01 shell 3D radial filtering reading
+df3d_radial = DataFrame()
+
+for file in readdir(folder_path_radial_3D)
+    if endswith(file, ".txt")
+        df = CSV.File(joinpath(folder_path_radial_3D, file), delim=',', header=true) |> DataFrame
+        for col_name in names(df)[1:2]
+            df3d_radial[!, col_name] = df[!, col_name]
+        end
+    end
+end
+
+# 100 kpc 2D box filtering reading
+df2d_radial = DataFrame()
+
+# Itera sui file e leggi i dati
+for file in readdir(folder_path_radial_2D)
+    if endswith(file, ".txt")
+        df = CSV.File(joinpath(folder_path_radial_2D, file), delim=',', header=true) |> DataFrame
+        for col_name in names(df)[1:2]
+            new_col_name = Symbol(col_name * "_" * file[1])  # Aggiungi il nome del file per rendere il nome univoco
+            df2d_radial[!, new_col_name] = df[!, col_name]
+        end
+    end
+end
+
+dtslope_mean_box = mean.(eachrow(df2d_box[:, [:dtslope_x, :dtslope_y, :dtslope_z]]))
+dvslope_mean_box = mean.(eachrow(df2d_box[:, [:dvslope_x, :dvslope_y, :dvslope_z]]))
+tvslope_mean_box = mean.(eachrow(df2d_box[:, [:tvslope_x, :tvslope_y, :tvslope_z]]))
+
+dtslope_max_box = maximum.(eachrow(df2d_box[:, [:dtslope_x, :dtslope_y, :dtslope_z]]))
+dvslope_max_box = maximum.(eachrow(df2d_box[:, [:dvslope_x, :dvslope_y, :dvslope_z]]))
+tvslope_max_box = maximum.(eachrow(df2d_box[:, [:tvslope_x, :tvslope_y, :tvslope_z]]))
+
+dtslope_min_box = minimum.(eachrow(df2d_box[:, [:dtslope_x, :dtslope_y, :dtslope_z]]))
+dvslope_min_box = minimum.(eachrow(df2d_box[:, [:dvslope_x, :dvslope_y, :dvslope_z]]))
+tvslope_min_box = minimum.(eachrow(df2d_box[:, [:tvslope_x, :tvslope_y, :tvslope_z]]))
 
 
 
-d_t_slope_2d_radial = [-0.14, -0.08, -0.07, 0.01, -0.35, -0.11, -0.22, -0.21]
-d_v_slope_2d_radial = [1.13, 0.46, 0.61, 0.66, 0.87, 0.80, 0.78, 1.27]
-t_v_slope_2d_radial = [0.64, 2.00, 1.08, 1.02, 0.51, 0.45, 1.30, 0.72]
+dtslope_mean_radial = mean.(eachrow(df2d_radial[:, [:dtslope_x, :dtslope_y, :dtslope_z]]))
+dvslope_mean_radial = mean.(eachrow(df2d_radial[:, [:dvslope_x, :dvslope_y, :dvslope_z]]))
+tvslope_mean_radial = mean.(eachrow(df2d_radial[:, [:tvslope_x, :tvslope_y, :tvslope_z]]))
 
-d_t_slope_2d_radial_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-d_v_slope_2d_radial_error = [0.02, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-t_v_slope_2d_radial_error = [0.02, 0.02, 0.02, 0.02, 0.01, 0.01, 0.01, 0.01]
+dtslope_max_radial = maximum.(eachrow(df2d_radial[:, [:dtslope_x, :dtslope_y, :dtslope_z]]))
+dvslope_max_radial = maximum.(eachrow(df2d_radial[:, [:dvslope_x, :dvslope_y, :dvslope_z]]))
+tvslope_max_radial = maximum.(eachrow(df2d_radial[:, [:tvslope_x, :tvslope_y, :tvslope_z]]))
 
-d_t_slope_3d_radial = [-0.16, -0.01, -0.05, -0.05, -0.17, -0.002, -0.07, -0.08]
-d_v_slope_3d_radial = [0.99, 0.28, 0.39, 0.82, 0.71, 0.96, 0.27, 0.94]
-t_v_slope_3d_radial = [1.33, 2.05, 1.53, 2.61, 1.47, 1.11, 1.48, 1.39]
+dtslope_min_radial = minimum.(eachrow(df2d_radial[:, [:dtslope_x, :dtslope_y, :dtslope_z]]))
+dvslope_min_radial = minimum.(eachrow(df2d_radial[:, [:dvslope_x, :dvslope_y, :dvslope_z]]))
+tvslope_min_radial = minimum.(eachrow(df2d_radial[:, [:tvslope_x, :tvslope_y, :tvslope_z]]))
 
-d_t_slope_3d_radial_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-d_v_slope_3d_radial_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
-t_v_slope_3d_radial_error = [0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+fig, ax = subplots(figsize=(6,6))
+fig.subplots_adjust(top=0.99,bottom=0.125,left=0.165, right=0.99)
 
-#errorbar(d_t_slope_2d_box, d_t_slope_3d_box, xerr=d_t_slope_2d_box_error, yerr=d_t_slope_3d_box_error, marker=".", markersize=10.0, color="darkblue", linestyle="", label="box filtering")
-#errorbar(d_t_slope_2d_radial, d_t_slope_3d_radial, xerr=d_t_slope_2d_radial_error, yerr=d_t_slope_3d_radial_error, marker=".", markersize=10.0, color="red", linestyle="", label="radial filtering")
-scatter(d_t_slope_2d_box, d_t_slope_3d_box, marker=".", s=250, edgecolor="black", color="darkblue", label="box filtering")
-scatter(d_t_slope_2d_radial, d_t_slope_3d_radial, marker=".", s=250, edgecolor="black", color="red", label="radial filtering")
+upper_error_box = abs.(dtslope_max_box - dtslope_mean_box)
+lower_error_box =  abs.(dtslope_min_box - dtslope_mean_box)
+upper_error_radial = abs.(dtslope_max_radial - dtslope_mean_radial)
+lower_error_radial =  abs.(dtslope_min_radial - dtslope_mean_radial)
+
+errorbar(dtslope_mean_box, df3d_box.dtslope, xerr=(lower_error_box, upper_error_box), linestyle="", marker=".", markersize = 16, color="blue", label="box filtering", markeredgecolor="black")
+errorbar(dtslope_mean_radial, df3d_radial.dtslope, xerr=(lower_error_radial, upper_error_radial), linestyle="", marker=".", markersize = 16, color="red", label="radial_filtering", markeredgecolor="black")
 xlabel(L"(\delta T/\delta \rho)_{2D}",fontsize=20)
 ylabel(L"(\delta T/\delta \rho)_{3D}",fontsize=20)
-xlim(-0.5, 0.2)
-ylim(-0.5, 0.2)
-xticks(fontsize=18)
-yticks(fontsize=18)
-legend(fontsize=15, loc="upper left")
+xticks([-0.4, -0.2, 0, 0.2],fontsize=18)
+yticks([-0.4, -0.3, -0.2, -0.1, 0, 0.1, 0.2],fontsize=18)
+xlim(-0.4, 0.3)
+ylim(-0.4, 0.2)
+legend(fontsize=15, loc="upper right")
 show()
-
 readline()
 clf()
 
-#errorbar(d_v_slope_2d_box, d_v_slope_3d_box, xerr=d_v_slope_2d_box_error, yerr=d_v_slope_3d_box_error, marker=".", markersize=10.0, color="darkblue", linestyle="", label="box filtering")
-#errorbar(d_v_slope_2d_radial, d_v_slope_3d_radial, xerr=d_v_slope_2d_radial_error, yerr=d_v_slope_3d_radial_error, marker=".", markersize=10.0, color="red", linestyle="", label="radial filtering")
-scatter(d_v_slope_2d_box, d_v_slope_3d_box, marker="s", s=50, edgecolor="black", color="darkblue")
-scatter(d_v_slope_2d_radial, d_v_slope_3d_radial, marker="s", s=50, edgecolor="black", color="red")
+upper_error_box = abs.(dvslope_max_box - dvslope_mean_box)
+lower_error_box =  abs.(dvslope_min_box - dvslope_mean_box)
+upper_error_radial = abs.(dvslope_max_radial - dvslope_mean_radial)
+lower_error_radial =  abs.(dvslope_min_radial - dvslope_mean_radial)
+
+errorbar(dvslope_mean_box, df3d_box.dvslope, xerr=(lower_error_box, upper_error_box), linestyle="", marker="s", markersize = 7, color="blue", label="box filtering", markeredgecolor="black")
+errorbar(dvslope_mean_radial, df3d_radial.dvslope, xerr=(lower_error_radial, upper_error_radial), linestyle="", marker="s", markersize = 7, color="red", label="radial_filtering", markeredgecolor="black")
 xlabel(L"(\delta v/\delta \rho)_{2D}",fontsize=20)
 ylabel(L"(\delta v/\delta \rho)_{3D}",fontsize=20)
-xlim(0.2, 1.3)
-ylim(0.2, 1.3)
 xticks(fontsize=18)
 yticks(fontsize=18)
-#legend(fontsize=15, loc="upper left")
+#xlim(-0.4, 0.3)
+#ylim(-0.4, 0.2)
+legend(fontsize=15, loc="lower right")
 show()
-
 readline()
 clf()
 
 
-scatter(t_v_slope_2d_box, t_v_slope_3d_box, marker="D", s=50, edgecolor="black", color="darkblue")
-scatter(t_v_slope_2d_radial, t_v_slope_3d_radial, marker="D", s=50, edgecolor="black", color="red")
+
+upper_error_box = abs.(tvslope_max_box - tvslope_mean_box)
+lower_error_box =  abs.(tvslope_min_box - tvslope_mean_box)
+upper_error_radial = abs.(tvslope_max_radial - tvslope_mean_radial)
+lower_error_radial =  abs.(tvslope_min_radial - tvslope_mean_radial)
+
+errorbar(tvslope_mean_box, df3d_box.tvslope, xerr=(lower_error_box, upper_error_box), linestyle="", marker="D", markersize = 7, color="blue", label="box filtering", markeredgecolor="black")
+errorbar(tvslope_mean_radial, df3d_radial.tvslope, xerr=(lower_error_radial, upper_error_radial), linestyle="", marker="D", markersize = 7, color="red", label="radial_filtering", markeredgecolor="black")
 xlabel(L"(\delta v/\delta T)_{2D}",fontsize=20)
 ylabel(L"(\delta v/\delta T)_{3D}",fontsize=20)
-#xlim(0.2, 1.3)
-#ylim(0.2, 1.3)
-xticks(fontsize=18)
+xticks([0.6, 1.0, 1.4, 1.8, 2.2],fontsize=18)
 yticks(fontsize=18)
-#legend(fontsize=15, loc="upper left")
+#xlim(-0.4, 0.3)
+#ylim(-0.4, 0.2)
+legend(fontsize=15, loc="upper left")
 show()

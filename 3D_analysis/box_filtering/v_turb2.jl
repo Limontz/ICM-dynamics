@@ -40,7 +40,7 @@ function v_turb2(d, vx_conv, vy_conv, vz_conv, temp, Npoint, Nhalf_box, xc, yc, 
 
                       d_turb[i, j, k] = (d[i, j, k] - d_mean)/d_mean
 
-                      v[i,j,k] = sqrt( vx_turb[i,j,k]^2. +  vy_turb[i,j,k]^2. +  vz_turb[i,j,k]^2.) / sqrt((gamma * kb * temp[i,j,k] / (mu * mp)))
+                      v[i,j,k] = sqrt( vx_turb[i,j,k]^2. +  vy_turb[i,j,k]^2. +  vz_turb[i,j,k]^2.) / sqrt((gamma * kb * temp_mean / (mu * mp)))
                   end
               end
           end

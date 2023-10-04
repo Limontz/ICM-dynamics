@@ -16,9 +16,9 @@ function filtering2D(d, d_prof, temp, temp_prof, vx, vx_prof, vy, vy_prof, vz, v
                           if ra <=1
                              ra=1
                           end
-                          if ra > radial_bin
-                             #ra=radial_bin
-                             @goto after
+                          if ra >= radial_bin
+                             ra=radial_bin
+                             #@goto after
                           end
 
                           vx_turb = vx[i,j]-vx_prof[ra]# / temp_prof[ra]  #filtering each velocity component substracting the velocity mean to the original field
@@ -30,7 +30,7 @@ function filtering2D(d, d_prof, temp, temp_prof, vx, vx_prof, vy, vy_prof, vz, v
                           #println(i,j, " ", ra, " ", temp[i,j], " ", temp_prof[ra], " ", temp[i,j] - temp_prof[ra])
 
                           v_turb_2D[i,j] = sqrt( vx_turb^2. +  vy_turb^2. +  vz_turb^2.) / sqrt((gamma * kb * temp_prof[ra] / (mu * mp)))
-                          @label after
+                          #@label after
                   end
               end
 

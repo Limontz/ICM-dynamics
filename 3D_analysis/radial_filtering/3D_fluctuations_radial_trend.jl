@@ -42,8 +42,8 @@ xc = index[1]
 yc = index[2]
 zc = index[3]
 
-N = 10
-Ncell = floor(Int32, (r500/(20*kpc))) + N
+N = thickness*200
+Ncell = floor(Int32, (r500/(20*kpc))+ N)
 #********************* Let's consider only ************************
 #********************* the cells inside R500 **********************
 d_dm = d_dm[xc-Ncell:xc+Ncell,yc-Ncell:yc+Ncell,zc-Ncell:zc+Ncell]
@@ -136,20 +136,20 @@ zc = floor(Int32, length(d_dm[1,1,:])/2 +1)
 rmax=r500
 radial_bin = Int(floor(10*rmax/r500))
 
-include(string(main, "3D_average_radial_perturbation.jl"))
-dens_shell_mean, temp_shell_mean, v_shell_mean, v_shell_mean2=average_radial_perturb(d, d_prof,temp, temp_prof,
-                                              vx, vx_prof, vy, vy_prof, vz, vz_prof, radial_bin, xc, yc ,zc, r500, thickness)
+#include(string(main, "3D_average_radial_perturbation.jl"))
+#dens_shell_mean, temp_shell_mean, v_shell_mean, v_shell_mean2=average_radial_perturb(d, d_prof,temp, temp_prof,
+#                                              vx, vx_prof, vy, vy_prof, vz, vz_prof, radial_bin, xc, yc ,zc, r500, thickness)
 
 include(string(main, "3D_slope_radial_profile.jl"))
 slope_dt, slope_dv, slope_tv, slope_tv2=slope_radial_profile(deltad,deltaT,deltav, radial_bin, xc, yc ,zc, r500, thickness)
 
 bin=[1,2,3,4,5,6,7,8,9,10]
-output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fluctuations_radial_trend.txt")
-out1=open(output1,"w") do out1
-writedlm( out1, [bin dens_shell_mean temp_shell_mean v_shell_mean v_shell_mean2])
-end
+#output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/01_radial_filtering/new_",name[l],"_3D_radial_filtering_fluctuations_radial_trend.txt")
+#out1=open(output1,"w") do out1
+#writedlm( out1, [bin dens_shell_mean temp_shell_mean v_shell_mean v_shell_mean2])
+#end
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_slope_radial_trend.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/01_radial_filtering/new_",name[l],"_3D_radial_filtering_slope_radial_trend.txt")
 out1=open(output1,"w") do out1
 writedlm( out1, [bin slope_dt slope_dv slope_tv slope_tv2])
 end

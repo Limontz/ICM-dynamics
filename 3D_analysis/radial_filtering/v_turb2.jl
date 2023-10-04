@@ -7,7 +7,6 @@ function v_turb2(d, d_prof, vx_conv, vy_conv, vz_conv, temp, temp_prof, Npoint, 
     gamma = 5.0 / 3.0
     pc = 3.08e18
     kpc = pc * 1000
-    println(Npoint)
     #radial_bin=300
     Ncell= 1
     N_half=floor(Int32,Ncell/2)
@@ -60,12 +59,12 @@ function v_turb2(d, d_prof, vx_conv, vy_conv, vz_conv, temp, temp_prof, Npoint, 
                       d_turb[i, j, k] = (d[i, j, k] - d_prof[ra])/d_prof[ra]
 
 
-                      #vx_turb_prof = vx_conv[i,j,k] - vx_prof[ra] #filtering each velocity component substracting the velocity 3D profile
-                      #vy_turb_prof = vy_conv[i,j,k] - vy_prof[ra]
-                      #vz_turb_prof = vz_conv[i,j,k] - vz_prof[ra]
+                      vx_turb_prof = vx_conv[i,j,k] - vx_prof[ra] #filtering each velocity component substracting the velocity 3D profile
+                      vy_turb_prof = vy_conv[i,j,k] - vy_prof[ra]
+                      vz_turb_prof = vz_conv[i,j,k] - vz_prof[ra]
 
                       #v[i,j,k] = sqrt( vx_turb[i,j,k]^2. +  vy_turb[i,j,k]^2. +  vz_turb[i,j,k]^2.) / sqrt((gamma * kb * temp[i,j,k] / (mu * mp)))
-                      #vturb = sqrt( vx_turb_prof^2. + vy_turb_prof^2. + vz_turb_prof^2.)
+                      vturb = sqrt( vx_turb_prof^2. + vy_turb_prof^2. + vz_turb_prof^2.) / sqrt((gamma * kb * temp[ra] / (mu * mp)))
                       #v_mean = sqrt( vx_mean^2. + vy_mean^2. +vz_mean^2.)
                       #v_box[i,j,k] = v[i, j, k] / sqrt((gamma * kb * temp_prof[ra] / (mu * mp)))  #evaluating the logarithmic velocity perturbations
                       #v_box_prof[i,j,k] = vturb[ra] / sqrt((gamma * kb * temp_prof[ra] / (mu * mp)))

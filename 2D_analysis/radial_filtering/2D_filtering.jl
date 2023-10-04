@@ -41,8 +41,8 @@ function filtering2D(d, d_prof, temp, temp_prof, vx, vy, vz, radial_bin, Npoint,
                           #vy_turb_prof = vy_conv[i,j,k] - vy_prof[ra]
                           #vz_turb_prof = vz_conv[i,j,k] - vz_prof[ra]
                           v = sqrt( vx_mean^2. +  vy_mean^2. +  vz_mean^2.)
-                          cs = sqrt((gamma * kb * temp[i,j] / (mu * mp)))
-                          v_turb_2D[i,j] = sqrt( vx_turb^2. +  vy_turb^2. +  vz_turb^2.) / v
+                          cs = sqrt((gamma * kb * temp_prof[ra] / (mu * mp)))
+                          v_turb_2D[i,j] = sqrt( vx_turb^2. +  vy_turb^2. +  vz_turb^2.) / cs
 
                   end
               end

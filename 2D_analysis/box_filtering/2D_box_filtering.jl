@@ -1,4 +1,4 @@
-function filtering2D(d_2D, temp, vx, vy, vz, Npoint,  Nhalf_box)
+function box_filtering2D(d_2D, temp, vx, vy, vz, Npoint,  Nhalf_box)
 
 
     Ncell_box = floor(Int32,2*Nhalf_box)
@@ -27,7 +27,7 @@ function filtering2D(d_2D, temp, vx, vy, vz, Npoint,  Nhalf_box)
                           T_turb_2D[i,j] = (temp[i,j] - temp_mean) / temp_mean
                           d_turb_2D[i, j] = (d_2D[i, j] - d_mean) / d_mean
 
-                          v_turb_2D[i,j] = sqrt( vx_turb^2. +  vy_turb^2. +  vz_turb^2.)/ sqrt((gamma * kb * temp[i,j] / (mu * mp)))
+                          v_turb_2D[i,j] = sqrt( vx_turb^2. +  vy_turb^2. +  vz_turb^2.)/ sqrt((gamma * kb * temp_mean / (mu * mp)))
                           if (v_turb_2D[i, j] > 1.e3 || d_turb_2D[i, j] > 1.e3)
                               print(i," ",j)
                           end

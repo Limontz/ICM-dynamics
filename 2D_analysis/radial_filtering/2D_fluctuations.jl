@@ -13,7 +13,7 @@ cluster =  "/home/marco/Scrivania/Tesi/Ammassi_tesi/"
 include(string(main, "read.jl"))
 include(string(main, "vel_module3D.jl"))
 include(string(main, "nfluct.jl"))
-include(string(main, "x_Projection.jl"))
+include(string(main, "y_Projection.jl"))
 include(string(main, "vel_module2D.jl"))
 include(string(main, "radial_profile.jl"))
 include(string(main, "2D_radial_profile.jl"))
@@ -198,11 +198,6 @@ radial_bin = Int(floor(10*r500/r500))
 #readline()
 
 
-#****************** DeltaT/T-deltav relation *********************************
-
-Ncell = floor(Int32, (r500/(20*kpc)))
-println((Ncell), " ", 0.6*r500/kpc)
-
 #-------------- Fluctuations as result of filtering --------------------------------
 #array_size=length(deltaT_2D[xc-Ncell:xc+Ncell,yc-Ncell:yc+Ncell])
 
@@ -258,7 +253,7 @@ p_value=pvalue(CorrelationTest(deltad_2D,deltaT_2D))
 #end
 #close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/x_2D_02_radial_filtering_density_temperature_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/y_2D_02_radial_filtering_density_temperature_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -296,7 +291,7 @@ p_value=pvalue(CorrelationTest(abs.(deltad_2D),abs.(deltav_2D)))
 #end
 #close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/x_2D_02_radial_filtering_density_velocity_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/y_2D_02_radial_filtering_density_velocity_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -347,7 +342,7 @@ p_value=pvalue(CorrelationTest(abs.(deltaT_2D),abs.(deltav_2D)))
 #end
 #close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/x_2D_02_radial_filtering_temperature_velocity_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/y_2D_02_radial_filtering_temperature_velocity_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -387,7 +382,7 @@ p_value=pvalue(CorrelationTest(abs.(deltaT_2D),deltav_2D.^2))
 #end
 #close(output1)
 
-output1=file1="/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/x_2D_02_radial_temperature_velocity2_filtering_fit_parameters.txt"
+output1=file1="/home/marco/Scrivania/Ettori_project/02_2D_radial_filtering/y_2D_02_radial_temperature_velocity2_filtering_fit_parameters.txt"
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end

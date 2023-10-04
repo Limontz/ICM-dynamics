@@ -141,15 +141,15 @@ xc = index[1]
 yc = index[2]
 zc = index[3]
 
-sigmaT[l] = std(deltaT)
-sigman[l] = std(deltad)
+#sigmaT[l] = std(deltaT)
+#sigman[l] = std(deltad)
 
-end
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/Plots/3D_300_box_filtering_mean_fluctuations.txt")
-out1=open(output1,"w") do out1
-writedlm( out1, [sigmaT sigman])
-end
+
+#output1=file1=string("/home/marco/Scrivania/Ettori_project/Plots/3D_300_box_filtering_mean_fluctuations.txt")
+#out1=open(output1,"w") do out1
+#writedlm( out1, [sigmaT sigman])
+#end
 
 
 dx=0.02
@@ -236,10 +236,10 @@ p_value=pvalue(CorrelationTest(deltad,deltaT))
 #end
 #close(output1)
 
-#output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/100_kpc_filtering/new_",name[l],"_3D_box_filtering_fit_parameters.txt")
-#out1=open(output1,"a+") do out1
-#writedlm( out1, [param[1] sigma_par[1] R p_value])
-#end
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_3D_box_filtering/3D_300_kpc_box_filtering_density_temperature_fit_parameters.txt")
+out1=open(output1,"a+") do out1
+writedlm( out1, [param[1] sigma_par[1] R p_value])
+end
 
 
 println("----------- 3D FLUCTUATIONS: density-velocity-------------")
@@ -261,10 +261,10 @@ p_value=pvalue(CorrelationTest(abs.(deltad),abs.(deltav)))
 #end
 #close(output1)
 
-#output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/100_kpc_filtering/new_",name[l],"_3D_box_filtering_fit_parameters.txt")
-#out1=open(output1,"a+") do out1
-#writedlm( out1, [param[1] sigma_par[1] R p_value])
-#end
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_3D_box_filtering/3D_300_kpc_box_filtering_density_velocity_fit_parameters.txt")
+out1=open(output1,"a+") do out1
+writedlm( out1, [param[1] sigma_par[1] R p_value])
+end
 
 
 #x = collect(minimum(abs.(deltad)):0.001:maximum(abs.(deltad)))
@@ -327,10 +327,10 @@ p_value=pvalue(CorrelationTest(abs.(deltaT),abs.(deltav)))
 #end
 #close(output1)
 
-#output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/100_kpc_filtering/new_",name[l],"_3D_box_filtering_fit_parameters.txt")
-#out1=open(output1,"a+") do out1
-#writedlm( out1, [param[1] sigma_par[1] R p_value])
-#end
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_3D_box_filtering/3D_300_kpc_box_filtering_temperature_velocity_fit_parameters.txt")
+out1=open(output1,"a+") do out1
+writedlm( out1, [param[1] sigma_par[1] R p_value])
+end
 
 println("----------- 3D FLUCTUATIONS: temperature-velocity^2 -------------")
 
@@ -373,9 +373,9 @@ p_value=pvalue(CorrelationTest(abs.(deltaT),abs.(deltav).^2))
 #end
 #close(output1)
 
-#output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/100_kpc_filtering/new_",name[l],"_3D_box_filtering_fit_parameters.txt")
-#out1=open(output1,"a+") do out1
-#writedlm( out1, [param[1] sigma_par[1] R p_value])
-#end
+output1=file1=string("/home/marco/Scrivania/Ettori_project/300_kpc_3D_box_filtering/3D_300_kpc_box_filtering_temperature_velocity2_fit_parameters.txt")
+out1=open(output1,"a+") do out1
+writedlm( out1, [param[1] sigma_par[1] R p_value])
+end
 
-#end
+end

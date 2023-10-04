@@ -45,7 +45,7 @@ zc = index[3]
 #*********************PROJECTION***********************************
 
 Ncell = floor(Int32, (r500/(20*kpc)))
-include(string(main, "Projection.jl"))
+include(string(main, "y_Projection.jl"))
 include(string(main, "vel_module2D.jl"))
 dx=0.02
 d_2D, spec_T_2D, vx_2D, vy_2D, vz_2D = projection(d, temp, vx, vy, vz, Npoint)
@@ -53,7 +53,7 @@ d_2D, spec_T_2D, vx_2D, vy_2D, vz_2D = projection(d, temp, vx, vy, vz, Npoint)
 #********************* Let's consider only ************************
 #********************* the cells inside R500 **********************
 Ncell = floor(Int32, (r500/(20*kpc)))
-Ncell_box= 5
+Ncell_box= 15
 Nhalf_box=floor(Int32,Ncell_box/2)
 
 d_2D = d_2D[xc-Ncell-Nhalf_box:xc+Ncell+Nhalf_box,
@@ -94,7 +94,7 @@ Npoint=length(d_2D[1,:])
 
 include(string(main, "2D_box_filtering.jl"))
 include(string(main, "v_mean2D.jl"))
-deltad_2D, deltaT_2D, deltav_2D = filtering2D(d_2D, temp_2D, vx_2D, vy_2D, vz_2D, Npoint, Nhalf_box)
+deltad_2D, deltaT_2D, deltav_2D = box_filtering2D(d_2D, temp_2D, vx_2D, vy_2D, vz_2D, Npoint, Nhalf_box)
 
 deltad_2D = deltad_2D[xc-Ncell:xc+Ncell,
             yc-Ncell:yc+Ncell]
@@ -109,12 +109,9 @@ d_max, index = findmax(d_2D)
 xc = index[1]
 yc = index[2]
 
-println("length d_2d= ", length(d_2D[1,:]) )
 
-println("xc based on d2d= ", xc)
 
 xc = floor(Int32, length(deltad_2D[:,1])/2 +1)
-println("xc based on len/2= ", xc)
 yc = floor(Int32, length(deltad_2D[1,:])/2 +1)
 
 
@@ -139,8 +136,13 @@ yc = floor(Int32, length(deltad_2D[1,:])/2 +1)
 
 radial_bin = 10
 
-include(string(main, "2D_average_radial_perturbation.jl"))
-dens_shell_mean, temp_shell_mean, v_shell_mean, slope_dt, slope_dv, slope_tv, slope_tv2=average_radial_perturb(deltad_2D, deltaT_2D,deltav_2D, radial_bin, xc, yc ,zc, r500)
+#include(string(main, "2D_average_radial_perturbation.jl"))
+#dens_shell_mean, temp_shell_mean, v_shell_mean, slope_dt, slope_dv, slope_tv, slope_tv2=average_radial_perturb(deltad_2D, deltaT_2D,deltav_2D, radial_bin, xc, yc ,zc, r500)
+
+thickness = 0.1
+include(string(main, "2D_slope_radial_profile.jl"))
+slope_dt, slope_dv, slope_tv, slope_tv2=slope_radial_profile(deltad_2D,deltaT_2D,deltav_2D, radial_bin, xc, yc ,zc, r500, thickness)
+
 
 bin=[1,2,3,4,5,6,7,8,9,10]
 #output1=string("/home/marco/Scrivania/Ettori_project/IT90_0/100kpc_filtering/IT90_0_2D_box_filtering_fluctuations_radial_trend.txt")
@@ -148,7 +150,7 @@ bin=[1,2,3,4,5,6,7,8,9,10]
 #writedlm( out1, [bin dens_shell_mean temp_shell_mean v_shell_mean])
 #end
 
-output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/100_kpc_filtering/new_",name[l],"_2D_box_filtering_slope_radial_trend.txt")
+output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/300_kpc_filtering/y_",name[l],"_2D_box_filtering_slope_radial_trend.txt")
 out1=open(output1,"w") do out1
 writedlm( out1, [bin slope_dt slope_dv slope_tv slope_tv2])
 end

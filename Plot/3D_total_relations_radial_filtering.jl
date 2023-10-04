@@ -95,7 +95,8 @@ for i in 1:length(x)
     y2[i] = 0.19*((x[i]))
 end
 
-
+x_ticks = [0.2, 0.4, 0.6, 0.8, 1.0]
+y_ticks = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
 fig, ax1 = subplots(figsize=(6,7))
 #fig, ax1 = subplots(figsize=(6,6))
 fig.subplots_adjust(top=0.99,bottom=0.125,left=0.165, right=0.99)
@@ -109,9 +110,9 @@ divider = axgrid.make_axes_locatable(ax)
 plot(x,y,marker="", color="red")
 ylabel(L"(\sigma_{T}/T(r))_{3D}", fontsize=20)
 xlabel(L"(\sigma_{\rho}/\rho(r))_{3D}", fontsize=20)
-text(0.2, 0.46, string("m= ", round(param, digits=2), L"\pm", round(sigma_par, digits=2)), fontsize= 18)
-xticks(fontsize=18)
-yticks(fontsize=18)
+text(0.2, 0.46, string("m= 0.50", L"\pm", round(sigma_par, digits=2)), fontsize= 18)
+xticks(x_ticks, fontsize=18)
+yticks(y_ticks, fontsize=18)
 cax = divider[:append_axes]("top", size="5%", pad =0.05)
 cbar=colorbar(orientation="horizontal", cax=cax)
 cbar.ax.tick_params(labelsize=13)
@@ -130,7 +131,7 @@ clf()
 
 m(x, p) =  p[1] .* x
 p0=[1.]
-fit = curve_fit(m, density_perturbed, velocity_perturbed, p0)
+fit = curve_fit(m, density, velocity, p0)
 param = fit.param[1]
 #param = mean(temperature./density2)
 sigma_par= stderror(fit)[1]
@@ -170,8 +171,8 @@ text(0.2, 0.55, string("m= ", round(param, digits=2), L"\pm", round(sigma_par, d
 ax=gca()
 divider = axgrid.make_axes_locatable(ax)
 ##ylim(0,3)
-xticks(fontsize=18)
-yticks(fontsize=18)
+xticks(x_ticks, fontsize=18)
+yticks(y_ticks, fontsize=18)
 
 cax = divider[:append_axes]("top", size="5%", pad =0.05)
 cbar=colorbar(orientation="horizontal", cax=cax)
@@ -188,7 +189,7 @@ clf()
 
 m(x, p) =  p[1] .* x
 p0=[1.]
-fit = curve_fit(m, temperature_perturbed, velocity_perturbed, p0)
+fit = curve_fit(m, temperature, velocity, p0)
 param = fit.param[1]
 #param = mean(temperature./density2)
 sigma_par= stderror(fit)[1]
@@ -228,8 +229,8 @@ xlabel(L"(\sigma_{T}/T(r))_{3D}", fontsize=20)
 text(0.10, 0.50, string("m= ", round(param, digits=2), L"\pm", round(sigma_par, digits=2)), fontsize= 18)
 
 #ylim(0,3)
-xticks(fontsize=18)
-yticks(fontsize=18)
+xticks([0.2, 0.4, 0.6], fontsize=18)
+yticks(y_ticks, fontsize=18)
 ax=gca()
 divider = axgrid.make_axes_locatable(ax)
 cax = divider[:append_axes]("top", size="5%", pad =0.05)

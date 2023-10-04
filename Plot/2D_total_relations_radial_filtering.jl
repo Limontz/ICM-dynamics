@@ -186,9 +186,10 @@ velocity = cat(velocity_x, cat(velocity_y, velocity_z, dims=(1,1)), dims=(1,1))
 velocity2 = cat(velocity2_x, cat(velocity2_y, velocity2_z, dims=(1,1)), dims=(1,1))
 radius = cat(radius_x, cat(radius_y, radius_z, dims=(1,1)), dims=(1,1))
 
-idx = findall(density2 .<= 1)
+idx = findall(density2 .<= 2)
 #density = density[idx]
 density2 = density2[idx]
+temperature_copy = temperature
 temperature = temperature[idx]
 #velocity = velocity[idx]
 #velocity2 = velocity2[idx]
@@ -209,7 +210,8 @@ velocity_perturbed2 = cat(velocity_perturbed2_x, cat(velocity_perturbed2_y, velo
 radius_perturbed = cat(radius_perturbed_x, cat(radius_perturbed_y, radius_perturbed_z, dims=(1,1)), dims=(1,1))
 
 w = cat(wx, cat(wy, wz, dims=(1,1)), dims=(1,1))
-w = w[idx]
+w_copy = w
+w_copy = w[idx]
 
 m(x, p) =  p[1] .* x
 p0=[1.]
@@ -244,12 +246,11 @@ for i in 1:length(x)
     y2[i] = 0.19*((x[i]))
 end
 
-
 fig, ax1 = subplots(figsize=(6,7))
 #fig, ax1 = subplots(figsize=(6,6))
 fig.subplots_adjust(top=0.99,bottom=0.125,left=0.165, right=0.99)
 #plot(density, temperature, linestyle="", marker=".", markersize="10.0",color="black")
-scatter(density2, temperature, s=150, marker=".", c=w, cmap="cividis")
+scatter(density2, temperature, s=150, marker=".", c=w_copy, cmap="cividis")
 #scatter(density_perturbed, temperature_perturbed, s=150, marker=".", facecolors="blue", edgecolors="black", label="Disturbed")
 #scatter(density_relaxed, temperature_relaxed, s=150, marker=".", facecolors="orange", edgecolors="black", label="Relaxed")
 ax=gca()
@@ -259,8 +260,8 @@ plot(x,y,marker="", color="red")
 ylabel(L"(\sigma_{T}/T(r))_{2D}", fontsize=20)
 xlabel(L"(\sigma_{\rho^2}/\rho(r)^2)_{2D}", fontsize=20)
 text(0.25, 0.37, string("m=0.20", L"\pm", round(sigma_par, digits=2)), fontsize= 18)
-xticks(fontsize=18)
-yticks(fontsize=18)
+xticks([0.4, 0.8, 1.2, 1.6, 2.0], fontsize=18)
+yticks([0.1, 0.2, 0.3, 0.4, 0.5], fontsize=18)
 cax = divider[:append_axes]("top", size="5%", pad =0.05)
 cbar=colorbar(orientation="horizontal", cax=cax)
 cbar.ax.tick_params(labelsize=13)
@@ -321,8 +322,8 @@ text(0.15, 0.47, string("m=0.50", L"\pm", round(sigma_par, digits=2)), fontsize=
 ax=gca()
 divider = axgrid.make_axes_locatable(ax)
 ##ylim(0,3)
-xticks(fontsize=18)
-yticks(fontsize=18)
+xticks([0.2, 0.4, 0.6, 0.8, 1.0], fontsize=18)
+yticks([0.1, 0.2, 0.3, 0.4, 0.5], fontsize=18)
 xlim(0.1,1.1)
 
 cax = divider[:append_axes]("top", size="5%", pad =0.05)
@@ -341,7 +342,7 @@ clf()
 
 m(x, p) =  p[1] .* x
 p0=[1.]
-fit = curve_fit(m, temperature, velocity, p0)
+fit = curve_fit(m, temperature_copy, velocity, p0)
 param = fit.param[1]
 #param = mean(temperature./density2)
 sigma_par= stderror(fit)[1]
@@ -353,7 +354,7 @@ end
 println("----------- 2D FLUCTUATIONS: temperature-density -------------")
 println("m = ", param, " +- ", sigma_par)
 
-x = collect(minimum((temperature)):0.01:maximum((temperature)))
+x = collect(minimum((temperature_copy)):0.01:maximum((temperature_copy)))
 y = zeros(length(x))
 
 for i in 1:length(x)
@@ -361,8 +362,8 @@ for i in 1:length(x)
 end
 
 
-R = Statistics.cor(temperature, velocity)
-p_value=pvalue(CorrelationTest(temperature, velocity))
+R = Statistics.cor(temperature_copy, velocity)
+p_value=pvalue(CorrelationTest(temperature_copy, velocity))
 println("R= ", R)
 println("p-value =", p_value)
 
@@ -371,7 +372,7 @@ fig, ax1 = subplots(figsize=(6,7))
 #fig, ax1 = subplots(figsize=(6,6))
 fig.subplots_adjust(top=0.99,bottom=0.125,left=0.165, right=0.99)
 #plot(temperature, velocity.^2, linestyle="", marker=".", markersize="10.0",color="black")
-scatter(temperature, velocity, s=30, marker="D", c=w, cmap="cividis")
+scatter(temperature_copy, velocity, s=30, marker="D", c=w, cmap="cividis")
 #scatter(temperature_perturbed, velocity_perturbed2, s=30, marker="D", facecolors="blue", edgecolors="black", label="Disturbed")
 #scatter(temperature_relaxed, velocity_relaxed2, s=30, marker="D", facecolors="orange", edgecolors="black", label="Relaxed")
 
@@ -381,8 +382,8 @@ xlabel(L"(\sigma_{T}/T(r))_{2D}", fontsize=20)
 text(0.05, 0.45, string("m=", round(param, digits=2), L"\pm", round(sigma_par, digits=2)), fontsize= 18)
 
 #ylim(0,3)
-xticks(fontsize=18)
-yticks(fontsize=18)
+xticks([0.1, 0.2, 0.3, 0.4, 0.5], fontsize=18)
+yticks([0.1, 0.2, 0.3, 0.4, 0.5], fontsize=18)
 ax=gca()
 divider = axgrid.make_axes_locatable(ax)
 cax = divider[:append_axes]("top", size="5%", pad =0.05)

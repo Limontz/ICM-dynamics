@@ -125,15 +125,15 @@ xc = index[1]
 yc = index[2]
 zc = index[3]
 
-sigmaT[l] = std(deltaT)
-sigman[l] = std(deltad)
+#sigmaT[l] = std(deltaT)
+#sigman[l] = std(deltad)
 
-end
+#end
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/Plots/3D_02_radial_filtering_mean_fluctuations.txt")
-out1=open(output1,"w") do out1
-writedlm( out1, [sigmaT sigman])
-end
+#output1=file1=string("/home/marco/Scrivania/Ettori_project/Plots/3D_02_radial_filtering_mean_fluctuations.txt")
+#out1=open(output1,"w") do out1
+#writedlm( out1, [sigmaT sigman])
+#end
 
 #subplot(1,2,2)
 #pcolormesh((-Ncell*dx:dx:Ncell*dx),(-Ncell*dx:dx:Ncell*dx),(((deltad[:,:,zc]))))
@@ -171,9 +171,6 @@ end
 
 #************************* LINEAR FIT ********************************************
 
-
-
-exit()
 
 deltaT = vec(deltaT)
 deltav = vec(deltav)
@@ -217,14 +214,14 @@ R = Statistics.cor(deltad, deltaT)
 p_value=pvalue(CorrelationTest(deltad,deltaT))
 
 
-ans = "3D FLUCTUATIONS density-temperature:"
-output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
-out1=open(output1,"w") do out1
-write( out1, ans)
-end
-close(output1)
+#ans = "3D FLUCTUATIONS density-temperature:"
+#output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
+#out1=open(output1,"w") do out1
+#write( out1, ans)
+#end
+#close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/02_3D_radial_filtering/3D_02_radial_filtering_density_temperature_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -265,14 +262,14 @@ end
 R = Statistics.cor(abs.(deltad), abs.(deltav))
 p_value=pvalue(CorrelationTest(abs.(deltad),abs.(deltav)))
 
-ans = "3D FLUCTUATIONS density-velocity:"
-output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
-out1=open(output1,"a+") do out1
-write( out1, ans)
-end
-close(output1)
+#ans = "3D FLUCTUATIONS density-velocity:"
+#output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
+#out1=open(output1,"a+") do out1
+#write( out1, ans)
+#end
+#close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/02_3D_radial_filtering/3D_02_radial_filtering_density_velocity_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -315,14 +312,14 @@ end
 R = Statistics.cor(abs.(deltaT), abs.(deltav))
 p_value=pvalue(CorrelationTest(abs.(deltaT),abs.(deltav)))
 
-ans = "3D FLUCTUATIONS temperature-velocity:"
-output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
-out1=open(output1,"a+") do out1
-write( out1, ans)
-end
-close(output1)
+#ans = "3D FLUCTUATIONS temperature-velocity:"
+#output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
+#out1=open(output1,"a+") do out1
+#write( out1, ans)
+#end
+#close(output1)
 
-output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
+output1=file1=string("/home/marco/Scrivania/Ettori_project/02_3D_radial_filtering/3D_02_radial_filtering_temperature_velocity_fit_parameters.txt")
 out1=open(output1,"a+") do out1
 writedlm( out1, [param[1] sigma_par[1] R p_value])
 end
@@ -364,16 +361,16 @@ end
 R = Statistics.cor(abs.(deltaT), abs.(deltav).^2)
 p_value=pvalue(CorrelationTest(abs.(deltaT),abs.(deltav).^2))
 
-ans = "3D FLUCTUATIONS temperature-velocity^2:"
-output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
-out1=open(output1,"a+") do out1
-write( out1, ans)
-end
-close(output1)
-
-output1=file1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
-out1=open(output1,"a+") do out1
-writedlm( out1, [param[1] sigma_par[1]])
-end
-
+#ans = "3D FLUCTUATIONS temperature-velocity^2:"
+#output1=string("/home/marco/Scrivania/Ettori_project/",name[l],"/02_radial_filtering/new_",name[l],"_3D_radial_filtering_fit_parameters.txt")
+#out1=open(output1,"a+") do out1
+#write( out1, ans)
 #end
+#close(output1)
+
+output1=file1="/home/marco/Scrivania/Ettori_project/02_3D_radial_filtering/3D_02_radial_temperature_velocity2_filtering_fit_parameters.txt"
+out1=open(output1,"a+") do out1
+writedlm( out1, [param[1] sigma_par[1] R p_value])
+end
+
+end
